@@ -89,6 +89,30 @@ class BinaryTree<T> {
     }
 }
 
+function depthFirstSearch(root, target) {
+    if (!root) {
+        return null;
+    }
+    if (root.value === target) {
+        return root;
+    }
+    return depthFirstSearch(root.left, target) || depthFirstSearch(root.right, target);
+}
+
+function searchTreeMinimum(root, min) {
+    if (!root) {
+        return min;
+    }
+    return Math.min(searchTreeMinimum(root.left, root.value), searchTreeMinimum(root.right, root.value));
+}
+
+function treeDepth(node, depth = 0) {
+    if (!node) {
+        return depth;
+    }
+    return Math.max(treeDepth(node.left, depth + 1), treeDepth(node.right, depth + 1));
+}
+
 const bst = new BinaryTree(new BinaryTreeNode(42));
 // @ts-ignore
 bst._root.left =  (() => {
