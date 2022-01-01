@@ -6,7 +6,25 @@ class BinaryTreeNode<T> {
     constructor(value: T) {
         this.value = value;
     }
+}function appendChild(to, child) {
+    child && to.push(child);
 }
+
+var levelOrder = function(root) {
+    const traversal = [];
+    let ancestors = root ? [root] : [];
+    let children = [];
+    while (ancestors.length) {
+        for (let ancestor of ancestors) {
+            appendChild(children, ancestor.left);
+            appendChild(children, ancestor.right);
+        }
+        traversal.push(ancestors.map((ancestor => ancestor.val)));
+        ancestors = children;
+        children = [];
+    }
+    return traversal;
+};
 
 type TraverseCallback<T> = (value: BinaryTreeNode<T>) => void;
 
@@ -106,16 +124,84 @@ function searchTreeMinimum(root, min) {
     return Math.min(searchTreeMinimum(root.left, root.value), searchTreeMinimum(root.right, root.value));
 }
 
-function treeDepth(node, depth = 0) {
+function treeDepth(node) {
     if (!node) {
-        return depth;
+        return 0;
     }
-    return Math.max(treeDepth(node.left, depth + 1), treeDepth(node.right, depth + 1));
+    return 1 + Math.max(treeDepth(node.left), treeDepth(node.right));
+}
+
+/* see https://github.com/bratushkadan/algorthims-DS/blob/master/trees/README.md */
+function visibleTreeNode(root, prev = -Infinity) {
+    if (!root) {
+        return 0;
+    }
+    let visible = 0;
+    if (root.value >= prev) {
+        prev = root.value;
+        visible++;
+    }
+    return visible + visibleTreeNode(root.left, prev) + visibleTreeNode(root.right, prev);
+}
+
+function isBalanced(tree) {
+    if (!tree) {
+        return true;
+    }
+    if (tree.left && tree.right) {
+        return Math.abs(treeDepth(tree.left) - treeDepth(tree.right)) <= 1 && isBalanced(tree.left) && isBalanced(tree.right);
+    }
+    return Math.abs(treeDepth(tree.left) - treeDepth(tree.right)) <= 1;
+}
+
+function serializeDfs(root) {  
+    if (!root) {
+        return ' x';
+    }
+    return ` ${root.value}` + ' ' + serializeTree(root.left) + ' ' + serializeTree(root.right);
+}
+
+function serializeTree(root) {
+    return serializeDfs(root).trimStart();
+}
+
+let deserializeNode = entry => entry === 'x' ? null : new BinaryTreeNode(Number(entry));
+
+function deserializeDfs(nodes) {
+    const entry = deserializeNode(nodes.shift());
+    if (!entry) {
+        return null;
+    }
+    entry.left = deserializeDfs(nodes);
+    entry.right = deserializeDfs(nodes);
+    return entry;
+}
+
+function deserializeTree(s) {
+    return deserializeDfs(s.split(" "));
+}
+
+function lowestCommonAncestor(root, node1, node2) {
+    if (!root) {
+        return null;
+    }
+    if (root === node1 || root == node2) {
+        return root;
+    }
+
+    const left = lowestCommonAncestor(root.left, node1, node2);
+    const right = lowestCommonAncestor(root.right, node1, node2);
+
+    if (left && right) {
+        return root;
+    }
+    if (left) return left;
+    return right;
 }
 
 const bst = new BinaryTree(new BinaryTreeNode(42));
 // @ts-ignore
-bst._root.left =  (() => {
+bst._root.left = (() => {
     let node = new BinaryTreeNode(41);
     node.left = new BinaryTreeNode(10);
     node.right = new BinaryTreeNode(40);
