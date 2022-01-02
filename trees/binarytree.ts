@@ -6,25 +6,7 @@ class BinaryTreeNode<T> {
     constructor(value: T) {
         this.value = value;
     }
-}function appendChild(to, child) {
-    child && to.push(child);
 }
-
-var levelOrder = function(root) {
-    const traversal = [];
-    let ancestors = root ? [root] : [];
-    let children = [];
-    while (ancestors.length) {
-        for (let ancestor of ancestors) {
-            appendChild(children, ancestor.left);
-            appendChild(children, ancestor.right);
-        }
-        traversal.push(ancestors.map((ancestor => ancestor.val)));
-        ancestors = children;
-        children = [];
-    }
-    return traversal;
-};
 
 type TraverseCallback<T> = (value: BinaryTreeNode<T>) => void;
 
@@ -181,7 +163,7 @@ function deserializeTree(s) {
     return deserializeDfs(s.split(" "));
 }
 
-function lowestCommonAncestor(root, node1, node2) {
+function lca(root, node1, node2) {
     if (!root) {
         return null;
     }
@@ -198,6 +180,59 @@ function lowestCommonAncestor(root, node1, node2) {
     if (left) return left;
     return right;
 }
+/* check if node1 and node2 exist in a tree */
+function lowestCommonAncestor(tree, node1, node2) {
+    if (depthFirstSearch(tree, node1.val), depthFirstSearch(tree, node2.val)) {
+        return lca(tree, node1, node2);
+    }
+    return null;
+}
+
+function appendChild(to, child) {
+    child && to.push(child);
+}
+
+function levelOrder(root): number[][] {
+    const traversal = [];
+    let ancestors = root ? [root] : [];
+    let children = [];
+    while (ancestors.length) {
+        const traversalEntry = [];
+        ancestors.forEach(ancestor => {
+            traversalEntry.push(ancestor.val);
+            appendChild(children, ancestor.left);
+            appendChild(children, ancestor.right);
+        });
+        traversal.push(traversalEntry);
+        ancestors = children;
+        children = [];
+    }
+    return traversal;
+}
+
+function levelOrderTraverse(root) {
+    if (!root) {
+        return [];
+    }
+    const traversal = [root.val];
+    const stack = [root];
+    while (stack.length) {
+        const head = stack.shift();
+        if (head.left) {
+            traversal.push(head.left.val);
+            stack.push(head.left);
+        }
+        if (head.right) {
+            traversal.push(head.right.val);
+            stack.push(head.right);
+        }
+    }
+    return traversal;
+}
+
+const preorderTraversal = root => !root ? [] : [root.val, ...preorderTraversal(root.left), ...preorderTraversal(root.right)];
+const inorderTraversal = root => !root ? [] : [...inorderTraversal(root.left), root.val, ...inorderTraversal(root.right)];
+const postorderTraversal = root => !root ? [] : [...postorderTraversal(root.left), ...postorderTraversal(root.right), root.val];
 
 const bst = new BinaryTree(new BinaryTreeNode(42));
 // @ts-ignore
