@@ -188,6 +188,30 @@ function lowestCommonAncestor(tree, node1, node2) {
     return null;
 }
 
+function treeSize(root) {
+    if (!root) {
+        return 0;
+    }
+    return treeSize(root.left) + treeSize(root.right) + 1;
+}
+
+function kSmallest(root, k) {
+    if (!root) {
+        return null;
+    }
+    if (k < 1) {
+        return null;
+    }
+    const m = treeSize(root.left);
+    if (m + 1 === k) {
+        return root;
+    }
+    if (m >= k) {
+        return kSmallest(root.left, k);
+    }
+    return kSmallest(root.right, k - m - 1);
+}
+
 function appendChild(to, child) {
     child && to.push(child);
 }
