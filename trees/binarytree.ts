@@ -212,6 +212,22 @@ function kSmallest(root, k) {
     return kSmallest(root.right, k - m - 1);
 }
 
+function flatten(root) {
+    if (!root) {
+        return null;
+    }
+    let ll = new Node(root.val);
+    let llPointer = ll;
+    let stack = [root.right, root.left];
+    while(stack.length) {
+        const stackTop = stack.pop();
+        stackTop.right && stack.push(stackTop.right);
+        stackTop.left && stack.push(stackTop.left);
+        llPointer = llPointer.right = new Node(stackTop.val);
+    }
+    return ll;
+}
+
 function appendChild(to, child) {
     child && to.push(child);
 }
