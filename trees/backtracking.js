@@ -15,21 +15,22 @@ let tree = (() => {
 
 function ternaryTreePaths(tree) {
     const path = [];
-
+    
     function ttp(tree) {
         if (!tree) {
             return [];
         }
         path.push(tree.val);
-        let pth = path.join('->');
-        if (tree.children.some(node => node)) {
-            const res = tree.children.map(node => ttp(node).flat(1));
+        if (tree.children.length) {
+            const res = tree.children.map(child => ttp(child)).flat(1);
             path.pop();
             return res;
         }
+        const pth = path.join('->');
         path.pop();
         return [pth];
     }
+    
     return ttp(tree);
 }
 ternaryTreePaths(tree);
