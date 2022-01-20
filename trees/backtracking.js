@@ -34,3 +34,23 @@ function ternaryTreePaths(tree) {
     return ttp(tree);
 }
 ternaryTreePaths(tree);
+
+function permutations(collection) {
+    const result = [];
+    const state = [];
+
+    function perms(elements) {
+        if (!elements.length && state.length) {
+            result.push(state.slice());
+        }
+
+        for (let i = 0; i < elements.length; i++) {
+            state.push(elements[i]);
+            perms(elements.slice(0, i).concat(elements.slice(i + 1)));
+            state.pop();
+        }
+    }
+
+    perms(collection.slice())
+    return result;
+}
